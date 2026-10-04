@@ -21,7 +21,7 @@ namespace Skogsaventyret
         private Random slumpgenerator = new Random();
 
         //fältdeklarationer
-        private Spelare spelare;
+        private Player player;
         private bool spelPågår; // Håller koll på om spelet fortfarande pågår.
         private int dag;        // Vilken dag i spelet vi är på.
 
@@ -40,7 +40,7 @@ namespace Skogsaventyret
             Console.Write("Vad heter du?:");
             string namn = Console.ReadLine();
 
-            spelare = new Spelare(namn);
+            player = new Player(namn);
 
             while (spelPågår)
             {
@@ -54,7 +54,7 @@ namespace Skogsaventyret
         private void Promenad()
         {
             Console.WriteLine($"\n--- Dag {dag} ---");
-            Console.WriteLine($"{spelare.Namn} | HP: {spelare.Hp}/{spelare.MaxHp} | Level: {spelare.Level} | XP: {spelare.Xp}");
+            Console.WriteLine($"{player.Namn} | HP: {player.Hp}/{player.MaxHp} | Level: {player.Level} | XP: {player.Xp}");
             Console.WriteLine("Vad vill du göra?");
             Console.WriteLine("1) Ta en Öl i Kvillebäcken");
             Console.WriteLine("2) Strosa på stan (äventyra)");
@@ -77,12 +77,12 @@ namespace Skogsaventyret
             }
 
             dag++; // Nästa dag har kommit.
-            spelare.ÖverlevDag(); // Spelaren har överlevt ännu en dag.
+            player.ÖverlevDag(); // Spelaren har överlevt ännu en dag.
 
             // Om spelaren är helt slut (0 HP eller mindre) är spelet över.
-            if (spelare.Hp <= 0)
+            if (player.Hp <= 0)
             {
-                Console.WriteLine($"{spelare.Namn} klarade inte av trycket... Game over gubben.");
+                Console.WriteLine($"{player.Namn} klarade inte av trycket... Game over gubben.");
                 spelPågår = false;
             }
         }
@@ -90,8 +90,8 @@ namespace Skogsaventyret
         // Spelaren vilar och återhämtar halva sin HP
         private void Vila()
         {
-            Console.WriteLine($"{spelare.Namn} sover ut hemma i Vassen och känner sig pigg.");
-            spelare.Hela(spelare.MaxHp / 2);
+            Console.WriteLine($"{player.Namn} sover ut hemma i Vassen och känner sig pigg.");
+            player.Hela(player.MaxHp / 2);
         }
 
         // Spelaren ger sig ut på äventyr på en slumpad plats. ett slumpat monster dyker upp och de slåss mot varandra.
@@ -107,13 +107,13 @@ namespace Skogsaventyret
             Console.WriteLine($"En {monster.Namn} dyker upp! {monster.Beskrivning}");
 
             // starta striden och se om spelaren vinner eller förlorar
-            Strid strid = new Strid(spelare, monster);
+            Strid strid = new Strid(player, monster);
             bool spelarenVann = strid.Kör();
 
             if (spelarenVann)
             {
-                Console.WriteLine($"{spelare.Namn} vann och fick {monster.XpBelöning} XP!");
-                spelare.FåXp(monster.XpBelöning);
+                Console.WriteLine($"{player.Namn} vann och fick {monster.XpBelöning} XP!");
+                player.FåXp(monster.XpBelöning);
             }
         }
 

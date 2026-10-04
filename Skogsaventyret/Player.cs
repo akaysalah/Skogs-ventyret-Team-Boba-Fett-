@@ -18,12 +18,11 @@ namespace Skogsaventyret
 
         public int DagarÖverlevda { get; private set; }
 
-        // Hur mycket XP som krävs för att nå nästa level.
-        // Vi gör den lite högre för varje level (level 1 -> 2 kräver 100, level 2 -> 3 kräver 200, osv).
+        // hur mycket XP som krävs för att nå nästa level.kraven blir lite högre för varje level (level 1 -> 2 kräver 100, level 2 -> 3 kräver 200, osv).
         private int XpFörNästaLevel => Level * 100;
 
-        // Konstruktor: körs när en ny spelare skapas. Sätter startvärden.
-        public Spelare(string namn)
+        // konstruktor: körs när en ny player skapas. Sätter startvärden.
+        public Player(string namn)
         {
             Namn = namn;
 
@@ -37,6 +36,77 @@ namespace Skogsaventyret
             Xp = 0;
 
             DagarÖverlevda = 0;
+        }
+
+        // spelaren tar skada. HP kan aldrig gå under 0.
+        public void TaSkada(int mängd)
+        {
+            if (mängd < 0)
+            {
+                mängd = 0;
+            }
+
+            Hp -= mängd;
+
+            if (Hp < 0)
+            {
+                Hp = 0;
+            }
+        }
+
+        // spelaren återfår HP tillexempel genom vila. HP kan aldrig gå över MaxHp.
+        public void Hela(int mängd)
+        {
+            if (mängd < 0)
+            {
+                mängd = 0;
+            }
+
+            Hp += mängd;
+
+            if (Hp > MaxHp)
+            {
+                Hp = MaxHp;
+            }
+        }
+
+        // spelaren får erfarenhet (XP), t.ex. efter att ha besegrat ett monster och om spelaren samlat på sig tillräckligt mycket XP så levlar hen upp.
+        // om man samlar på sig väldigt mycket XP på en gång kan man levla upp flera gånger.
+        public void FåXp(int mängd)
+        {
+            if (mängd < 0)
+            {
+                mängd = 0;
+            }
+
+            Xp += mängd;
+
+            while (Xp >= XpFörNästaLevel)
+            {
+                Xp -= XpFörNästaLevel;
+                LevlaUpp();
+            }
+        }
+
+        // spelaren blir starkare: högre level, mer max-HP, attack och försvar.
+        // spelaren blir också fullt återställd (helad) när hen levlar upp.
+        public void LevlaUpp()
+        {
+            Level++;
+
+            MaxHp += 20;
+            Attack += 3;
+            Försvar += 2;
+
+            Hp = MaxHp;
+
+            Console.WriteLine($"{Namn} klev upp till level {Level}!");
+        }
+
+        // räknar upp antalet dagar spelaren har överlevt. kallas en gång per dag som klaras av.
+        public void ÖverlevDag()
+        {
+            DagarÖverlevda++;
         }
     }
 }
